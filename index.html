@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Little Cafe</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffe0ed, #e8dcff, #d8f5ff);
+    min-height: 100vh;
+    padding: 20px;
+    color: #754b75;
+}
+
+.container {
+    max-width: 750px;
+    margin: auto;
+    background: #fffafd;
+    border: 4px solid white;
+    border-radius: 25px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 8px 30px #c58ab655;
+}
+
+h1 {
+    color: #ec78a8;
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #9b78ba;
+    margin-bottom: 20px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: #ffe6f0;
+    padding: 12px;
+    border-radius: 15px;
+    flex: 1;
+    font-weight: bold;
+}
+
+.stat span {
+    display: block;
+    color: #db65a0;
+    font-size: 22px;
+    margin-top: 5px;
+}
+
+.order {
+    background: #f2eaff;
+    padding: 20px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+}
+
+.order h2 {
+    color: #9b69bd;
+    margin-bottom: 10px;
+}
+
+.customer {
+    font-size: 55px;
+    margin: 10px;
+}
+
+.order-name {
+    font-size: 23px;
+    color: #db65a0;
+    font-weight: bold;
+}
+
+.ingredients {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.ingredient {
+    border: 2px solid #f6c4dc;
+    border-radius: 15px;
+    padding: 15px 5px;
+    background: white;
+    cursor: pointer;
+    color: #825d8a;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.ingredient:hover {
+    background: #fff0f7;
+    transform: scale(1.04);
+}
+
+.ingredient.selected {
+    background: #ffdfed;
+    border-color: #ec78a8;
+    box-shadow: 0 0 10px #ec78a855;
+}
+
+.emoji {
+    display: block;
+    font-size: 30px;
+    margin-bottom: 7px;
+}
+
+.selected-area {
+    background: #fff0f7;
+    padding: 15px;
+    border-radius: 15px;
+    min-height: 65px;
+    margin: 15px 0;
+}
+
+.selected-area h3 {
+    margin-bottom: 8px;
+    color: #db65a0;
+}
+
+button.action {
+    border: none;
+    border-radius: 12px;
+    padding: 13px 22px;
+    margin: 6px;
+    background: #ee82b0;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button.action:hover {
+    background: #d7669c;
+}
+
+button.secondary {
+    background: #a987ce;
+}
+
+.message {
+    margin-top: 15px;
+    min-height: 30px;
+    font-weight: bold;
+    color: #a16db8;
+}
+
+.footer {
+    margin-top: 20px;
+    color: #b68bb7;
+    font-size: 13px;
+}
+
+@media(max-width: 450px) {
+    .ingredients {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎀 My Little Café 🍰</h1>
+    <p class="subtitle">Welcome, little chef! Let's cook something yummy!</p>
+
+    <div class="stats">
+
+        <div class="stat">
+            ⭐ SCORE
+            <span id="score">0</span>
+        </div>
+
+        <div class="stat">
+            🪙 COINS
+            <span id="coins">0</span>
+        </div>
+
+        <div class="stat">
+            ⏰ TIME
+            <span id="timer">60</span>
+        </div>
+
+    </div>
+
+    <div class="order">
+
+        <div class="customer">🐻</div>
+
+        <h2>Customer Order</h2>
+
+        <p>Can you prepare this for me?</p>
+
+        <div class="order-name" id="orderName">
+            🍓 Strawberry Cake
+        </div>
+
+    </div>
+
+    <h2>👩‍🍳 Choose Your Ingredients</h2>
+
+    <div class="ingredients" id="ingredients">
+
+    </div>
+
+    <div class="selected-area">
+
+        <h3>🧺 Your Ingredients</h3>
+
+        <p id="selected">Nothing selected yet!</p>
+
+    </div>
+
+    <button class="action" onclick="cookFood()">
+        🍳 COOK NOW
+    </button>
+
+    <button class="action secondary" onclick="clearIngredients()">
+        🗑️ CLEAR
+    </button>
+
+    <button class="action secondary" onclick="newGame()">
+        🔄 NEW GAME
+    </button>
+
+    <div class="message" id="message">
+        Choose the correct ingredients to prepare the order!
+    </div>
+
+    <p class="footer">
+        💗 Made with love in My Little Café 💗
+    </p>
+
+</div>
+
+<script>
+
+const ingredients = [
+    { name: "Flour", emoji: "🌾" },
+    { name: "Milk", emoji: "🥛" },
+    { name: "Egg", emoji: "🥚" },
+    { name: "Strawberry", emoji: "🍓" },
+    { name: "Chocolate", emoji: "🍫" },
+    { name: "Cheese", emoji: "🧀" },
+    { name: "Tomato", emoji: "🍅" },
+    { name: "Bread", emoji: "🍞" },
+    { name: "Butter", emoji: "🧈" },
+    { name: "Sugar", emoji: "🍬" },
+    { name: "Banana", emoji: "🍌" },
+    { name: "Lettuce", emoji: "🥬" }
+];
+
+const recipes = [
+    {
+        name: "Strawberry Cake 🍓",
+        items: ["Flour", "Egg", "Milk", "Strawberry", "Sugar"]
+    },
+    {
+        name: "Chocolate Cake 🍫",
+        items: ["Flour", "Egg", "Milk", "Chocolate", "Sugar"]
+    },
+    {
+        name: "Cheese Pizza 🍕",
+        items: ["Flour", "Tomato", "Cheese", "Butter"]
+    },
+    {
+        name: "Banana Pancakes 🥞",
+        items: ["Flour", "Milk", "Egg", "Banana", "Butter"]
+    },
+    {
+        name: "Yummy Sandwich 🥪",
+        items: ["Bread", "Cheese", "Tomato", "Lettuce", "Butter"]
+    }
+];
+
+let selectedItems = [];
+let currentRecipe;
+let score = 0;
+let coins = 0;
+let time = 60;
+let timerInterval;
+let gameActive = false;
+
+const ingredientBox =
+    document.getElementById("ingredients");
+
+// Show ingredients
+function showIngredients() {
+
+    ingredientBox.innerHTML = "";
+
+    ingredients.forEach(item => {
+
+        const button = document.createElement("button");
+
+        button.className = "ingredient";
+
+        button.innerHTML =
+            `<span class="emoji">${item.emoji}</span>
+             ${item.name}`;
+
+        button.onclick = () => selectIngredient(item.name, button);
+
+        ingredientBox.appendChild(button);
+
+    });
+
+}
+
+// Select ingredients
+function selectIngredient(name, button) {
+
+    if (!gameActive) {
+        document.getElementById("message").textContent =
+            "Press NEW GAME to start cooking!";
+        return;
+    }
+
+    if (selectedItems.includes(name)) return;
+
+    selectedItems.push(name);
+
+    button.classList.add("selected");
+
+    updateSelected();
+
+}
+
+// Update selected list
+function updateSelected() {
+
+    document.getElementById("selected").textContent =
+        selectedItems.length
+        ? selectedItems.join(" + ")
+        : "Nothing selected yet!";
+
+}
+
+// Clear ingredients
+function clearIngredients() {
+
+    selectedItems = [];
+
+    document.querySelectorAll(".ingredient")
+        .forEach(button => button.classList.remove("selected"));
+
+    updateSelected();
+
+    document.getElementById("message").textContent =
+        "Ingredients cleared! Choose again.";
+
+}
+
+// New order
+function newOrder() {
+
+    selectedItems = [];
+
+    currentRecipe =
+        recipes[Math.floor(Math.random() * recipes.length)];
+
+    document.getElementById("orderName").textContent =
+        currentRecipe.name;
+
+    updateSelected();
+
+    showIngredients();
+
+}
+
+// Cook food
+function cookFood() {
+
+    if (!gameActive) {
+        document.getElementById("message").textContent =
+            "Press NEW GAME to start!";
+        return;
+    }
+
+    const correct =
+        currentRecipe.items.length === selectedItems.length &&
+        currentRecipe.items.every(item => selectedItems.includes(item));
+
+    if (correct) {
+
+        score += 20;
+        coins += 10;
+
+        document.getElementById("score").textContent = score;
+        document.getElementById("coins").textContent = coins;
+
+        document.getElementById("message").textContent =
+            "🎉 Amazing! The customer loves your food! +20 points";
+
+        newOrder();
+
+    } else {
+
+        document.getElementById("message").textContent =
+            "😅 Not quite! Check the recipe and try again.";
+
+    }
+
+}
+
+// Start new game
+function newGame() {
+
+    clearInterval(timerInterval);
+
+    score = 0;
+    coins = 0;
+    time = 60;
+    gameActive = true;
+
+    document.getElementById("score").textContent = 0;
+    document.getElementById("coins").textContent = 0;
+    document.getElementById("timer").textContent = 60;
+
+    document.getElementById("message").textContent =
+        "Let's start cooking! 💗";
+
+    newOrder();
+
+    timerInterval = setInterval(() => {
+
+        time--;
+
+        document.getElementById("timer").textContent = time;
+
+        if (time <= 0) {
+
+            clearInterval(timerInterval);
+            gameActive = false;
+
+            document.getElementById("message").textContent =
+                "⏰ Time's up! Your final score is " + score +
+                ". Press NEW GAME to play again!";
+
+        }
+
+    }, 1000);
+
+}
+
+// Initial screen
+showIngredients();
+newOrder();
+
+document.getElementById("message").textContent =
+    "Press NEW GAME and start your cooking adventure!";
+
+</script>
+
+</body>
+</html>
